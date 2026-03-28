@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizador · Diseño Gráfico</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root {
+  --ink: #0f0d0a;
+  --paper: #faf8f4;
+  --cream: #f2ede4;
+  --gold: #c9974a;
+  --gold-light: #e8c98a;
+  --gold-pale: #fdf5e6;
+  --muted: #7a7065;
+  --border: #e0d8cc;
+  --white: #ffffff;
+  --red: #c0392b;
+  --green: #27ae60;
+  --shadow-soft: 0 2px 24px rgba(15,13,10,0.07);
+  --shadow-card: 0 4px 40px rgba(15,13,10,0.10);
+  --r: 16px;
+  --r-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* GRAIN OVERLAY */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+/* HEADER */
+.header {
+  background: var(--ink);
+  padding: 28px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+.header-brand { display: flex; align-items: center; gap: 16px; }
+.brand-mark {
+  width: 48px; height: 48px; background: var(--gold);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 1.4rem; color: var(--ink);
+  font-weight: 400; flex-shrink: 0;
+}
+.brand-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem; color: var(--white); letter-spacing: -0.02em;
+}
+.brand-sub { font-size: 0.78rem; color: var(--gold-light); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+.header-tagline { color: var(--muted); font-size: 0.82rem; font-weight: 500; font-style: italic; }
+
+/* LAYOUT */
+.layout {
+  max-width: 1160px; margin: 0 auto; padding: 40px 24px 80px;
+  display: grid; grid-template-columns: 1fr 400px; gap: 32px; position: relative; z-index: 1;
+}
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+/* SECTION LABELS */
+.section-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* CARDS */
+.card {
+  background: var(--white); border-radius: var(--r);
+  box-shadow: var(--shadow-card); padding: 28px;
+  margin-bottom: 20px; border: 1px solid var(--border);
+  animation: riseIn 0.45s ease both;
+}
+@keyframes riseIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.card:nth-child(2) { animation-delay: 0.06s; }
+.card:nth-child(3) { animation-delay: 0.12s; }
+.card:nth-child(4) { animation-delay: 0.18s; }
+
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem; color: var(--ink); margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.card-icon {
+  width: 34px; height: 34px; background: var(--gold-pale);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 600px) { .form-grid, .form-grid.cols-3 { grid-template-columns: 1fr; } }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 0.78rem; font-weight: 600; color: var(--muted);
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+input[type="text"], input[type="number"], input[type="email"],
+input[type="tel"], textarea, select {
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  padding: 10px 14px; font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem; color: var(--ink); background: var(--paper);
+  outline: none; transition: border 0.2s, box-shadow 0.2s; width: 100%;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,151,74,0.12);
+}
+textarea { resize: vertical; min-height: 70px; }
+
+/* SERVICES CATALOG */
+.catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 10px; }
+.catalog-item {
+  border: 1.5px solid var(--border); border-radius: var(--r-sm);
+  padding: 14px 12px; cursor: pointer; transition: all 0.2s;
+  background: var(--paper); position: relative; text-align: left;
+  font-family: 'DM Sans', sans-serif;
+}
+.catalog-item:hover { border-color: var(--gold-light); background: var(--gold-pale); transform: translateY(-2px); }
+.catalog-item.selected { border-color: var(--gold); background: var(--gold-pale); box-shadow: 0 0 0 2px var(--gold); }
+.catalog-item.selected::after {
+  content: '✓'; position: absolute; top: 8px; right: 8px;
+  width: 18px; height: 18px; background: var(--gold); border-radius: 50%;
+  color: white; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; line-height: 18px; text-align: center;
+}
+.cat-emoji { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+.cat-name { font-size: 0.82rem; font-weight: 600; color: var(--ink); display: block; margin-bottom: 3px; }
+.cat-price { font-size: 0.75rem; color: var(--gold); font-weight: 700; }
+.cat-time { font-size: 0.7rem; color: var(--muted); }
+
+/* SELECTED SERVICES TABLE */
+.services-table { width: 100%; border-collapse: collapse; }
+.services-table th {
+  text-align: left; font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  padding: 8px 10px; border-bottom: 1.5px solid var(--border);
+}
+.services-table td { padding: 10px; border-bottom: 1px solid var(--cream); vertical-align: middle; }
+.services-table tr:last-child td { border-bottom: none; }
+.qty-input { width: 52px; text-align: center; padding: 6px 8px; font-size: 0.9rem; }
+.remove-btn {
+  background: #fef2f2; border: none; color: var(--red); border-radius: 6px;
+  padding: 5px 9px; cursor: pointer; font-size: 0.85rem; transition: all 0.18s;
+  font-family: 'DM Sans', sans-serif;
+}
+.remove-btn:hover { background: var(--red); color: white; }
+.custom-price-input { width: 110px; text-align: right; padding: 6px 10px; font-size: 0.88rem; }
+
+/* URGENCY */
+.urgency-options { display: flex; gap: 10px; flex-wrap: wrap; }
+.urgency-btn {
+  flex: 1; min-width: 100px; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); background: var(--paper); cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.2s; text-align: center;
+}
+.urgency-btn:hover { border-color: var(--gold-light); }
+.urgency-btn.selected { border-color: var(--gold); background: var(--gold-pale); font-weight: 700; }
+.urgency-label { font-size: 0.85rem; font-weight: 600; display: block; }
+.urgency-sub { font-size: 0.72rem; color: var(--muted); }
+.urgency-mul { font-size: 0.72rem; color: var(--gold); font-weight: 700; }
+
+/* ===== SIDEBAR ===== */
+.sidebar { position: sticky; top: 24px; }
+
+.quote-summary {
+  background: var(--ink); border-radius: var(--r);
+  padding: 28px; color: var(--white); margin-bottom: 20px;
+  box-shadow: var(--shadow-card); overflow: hidden; position: relative;
+}
+.quote-summary::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,151,74,0.25), transparent 70%);
+}
+.qs-header { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 20px; opacity: 0.9; }
+.qs-line {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.88rem; gap: 10px;
+}
+.qs-line:last-of-type { border-bottom: none; }
+.qs-desc { color: rgba(255,255,255,0.65); flex: 1; }
+.qs-val { font-weight: 600; white-space: nowrap; }
+.qs-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 14px 0; }
+.qs-total { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+.qs-total-label { font-size: 0.82rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.08em; }
+.qs-total-val {
+  font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--gold-light);
+}
+.qs-delivery { margin-top: 16px; padding: 12px 16px; background: rgba(255,255,255,0.06); border-radius: 10px; }
+.qs-delivery-label { font-size: 0.72rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.qs-delivery-date { font-weight: 700; color: var(--gold-light); font-size: 1rem; }
+
+.empty-state {
+  text-align: center; padding: 28px 16px; color: var(--muted); font-size: 0.88rem;
+}
+.empty-state .es-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 12px 24px; border: none; border-radius: 50px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.92rem;
+  transition: all 0.2s; letter-spacing: 0.01em;
+}
+.btn-gold { background: var(--gold); color: var(--ink); }
+.btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,151,74,0.4); }
+.btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--ink); }
+.btn-outline:hover { border-color: var(--gold); background: var(--gold-pale); }
+.btn-dark { background: var(--ink); color: white; }
+.btn-dark:hover { background: #1a1714; transform: translateY(-1px); }
+.btn-full { width: 100%; }
+.btn-sm { padding: 7px 16px; font-size: 0.82rem; }
+
+/* ADD CUSTOM SERVICE */
+.custom-form {
+  background: var(--cream); border-radius: var(--r-sm); padding: 16px;
+  margin-top: 14px; border: 1.5px dashed var(--border);
+}
+.custom-form .form-grid { grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+
+/* DISCOUNT */
+.discount-row { display: flex; gap: 10px; align-items: flex-end; }
+.discount-row .form-group { flex: 1; }
+
+/* TAXES */
+.tax-toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.toggle-switch {
+  width: 44px; height: 24px; background: var(--border); border-radius: 12px;
+  position: relative; transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; background: white; border-radius: 50%;
+  transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on { background: var(--gold); }
+.toggle-switch.on::after { transform: translateX(20px); }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--ink); color: white; padding: 12px 24px; border-radius: 50px;
+  font-weight: 600; font-size: 0.9rem; box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); z-index: 9999; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; margin-right: 10px; }
+
+/* NOTES */
+.note-box { background: var(--gold-pale); border-left: 3px solid var(--gold); border-radius: 0 var(--r-sm) var(--r-sm) 0; padding: 12px 16px; font-size: 0.85rem; color: var(--muted); margin-top: 12px; }
+
+/* ===== PDF TEMPLATE ===== */
+#pdfTemplate {
+  display: none;
+  font-family: 'DM Sans', sans-serif;
+  background: #ffffff;
+  width: 794px;
+  padding: 0;
+  color: #0f0d0a;
+}
+.pdf-header {
+  background: #0f0d0a; padding: 36px 48px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.pdf-brand { color: white; }
+.pdf-brand-name { font-family: 'DM Serif Display', serif; font-size: 1.8rem; }
+.pdf-brand-sub { font-size: 0.75rem; color: #c9974a; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 3px; }
+.pdf-badge {
+  background: #c9974a; color: #0f0d0a; padding: 8px 20px;
+  border-radius: 6px; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em;
+  text-transform: uppercase; align-self: center;
+}
+.pdf-gold-bar { height: 3px; background: linear-gradient(90deg, #c9974a, #e8c98a, #c9974a); }
+.pdf-body { padding: 40px 48px; }
+.pdf-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.pdf-meta-block { padding: 20px; background: #faf8f4; border-radius: 10px; border: 1px solid #e0d8cc; }
+.pdf-meta-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7065; margin-bottom: 10px; font-weight: 700; }
+.pdf-meta-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+.pdf-meta-val { font-weight: 600; }
+.pdf-section-title {
+  font-family: 'DM Serif Display', serif; font-size: 1.05rem;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.pdf-section-title::after { content: ''; flex: 1; height: 1px; background: #e0d8cc; }
+.pdf-table { width: 100%; border-collapse: collapse; margin-bottom: 28px; }
+.pdf-table th {
+  background: #0f0d0a; color: white; text-align: left; padding: 10px 14px;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.pdf-table th:last-child { text-align: right; }
+.pdf-table td { padding: 11px 14px; border-bottom: 1px solid #f2ede4; font-size: 0.88rem; }
+.pdf-table td:last-child { text-align: right; font-weight: 600; }
+.pdf-table tr:nth-child(even) td { background: #faf8f4; }
+.pdf-totals { display: flex; justify-content: flex-end; margin-bottom: 28px; }
+.pdf-totals-box { width: 260px; }
+.pdf-tot-row { display: flex; justify-content: space-between; padding: 7px 0; font-size: 0.88rem; border-bottom: 1px solid #f2ede4; }
+.pdf-tot-row.final { background: #0f0d0a; color: white; padding: 12px 14px; border-radius: 8px; margin-top: 8px; font-weight: 700; border-bottom: none; }
+.pdf-notes-box { background: #fdf5e6; border-left: 3px solid #c9974a; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: #7a7065; margin-bottom: 28px; }
+.pdf-footer { background: #0f0d0a; padding: 20px 48px; text-align: center; color: #7a7065; font-size: 0.78rem; border-top: 3px solid #c9974a; }
+.pdf-validity { text-align: center; background: #fdf5e6; padding: 12px; border-radius: 8px; font-size: 0.82rem; color: #7a7065; margin-bottom: 20px; }
+.pdf-validity strong { color: #c9974a; }
+.pdf-delivery-highlight { display: flex; justify-content: space-between; background: #f2ede4; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
+.pdl-item { text-align: center; }
+.pdl-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #7a7065; margin-bottom: 4px; font-weight: 600; }
+.pdl-val { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: #0f0d0a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="brand-mark">✦</div>
+    <div>
+      <div class="brand-name">Studio Cotizador</div>
+      <div class="brand-sub">Diseño Gráfico · Servicios Creativos</div>
+    </div>
+  </div>
+  <div class="header-tagline">Genera cotizaciones profesionales en segundos</div>
+</div>
+
+<div class="layout">
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- DATOS DEL DISEÑADOR -->
+    <div class="card">
+      <div class="section-label">Perfil</div>
+      <div class="card-title"><div class="card-icon">🖋</div> Datos del Diseñador</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" id="designerName" placeholder="Tu nombre" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Especialidad</label>
+          <input type="text" id="designerSpecialty" placeholder="Diseño Gráfico & Branding" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="designerEmail" placeholder="hola@tudominio.com" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Teléfono / WhatsApp</label>
+          <input type="tel" id="designerPhone" placeholder="+57 300 000 0000" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <!-- DATOS DEL CLIENTE -->
+    <div class="card">
+      <div class="section-label">Cliente</div>
+      <div class="card-title"><div class="card-icon">👤</div> Información del Cliente</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre / Empresa</label>
+          <input type="text" id="clientName" placeholder="Nombre del cliente o empresa" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>NIT / Cédula (opcional)</label>
+          <input type="text" id="clientNit" placeholder="900.000.000-0" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Email cliente</label>
+          <input type="email" id="clientEmail" placeholder="cliente@empresa.com" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Ciudad</label>
+          <input type="text" id="clientCity" placeholder="Cúcuta, Colombia" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <!-- CATÁLOGO DE SERVICIOS -->
+    <div class="card">
+      <div class="section-label">Servicios</div>
+      <div class="card-title"><div class="card-icon">🎨</div> Catálogo de Servicios</div>
+      <div class="catalog-grid" id="catalogGrid"></div>
+
+      <!-- Servicio personalizado -->
+      <button class="btn btn-outline btn-sm" style="margin-top:14px" onclick="toggleCustomForm()">+ Servicio personalizado</button>
+      <div class="custom-form" id="customForm" style="display:none">
+        <div style="font-size:0.82rem;font-weight:700;margin-bottom:10px;color:var(--muted)">Servicio personalizado</div>
+        <div class="form-grid cols-3">
+          <div class="form-group">
+            <label>Nombre del servicio</label>
+            <input type="text" id="customSvcName" placeholder="Ej: Señalética">
+          </div>
+          <div class="form-group">
+            <label>Precio base (COP)</label>
+            <input type="number" id="customSvcPrice" placeholder="150000" min="0">
+          </div>
+          <div class="form-group">
+            <label>Días estimados</label>
+            <input type="number" id="customSvcDays" placeholder="3" min="1">
+          </div>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="addCustomService()">Agregar</button>
+      </div>
+    </div>
+
+    <!-- SERVICIOS SELECCIONADOS -->
+    <div class="card" id="selectedCard" style="display:none">
+      <div class="section-label">Detalle</div>
+      <div class="card-title"><div class="card-icon">📋</div> Servicios Seleccionados</div>
+      <div style="overflow-x:auto">
+        <table class="services-table" id="servicesTable">
+          <thead>
+            <tr>
+              <th>Servicio</th>
+              <th style="text-align:center">Cant.</th>
+              <th style="text-align:right">Precio unit.</th>
+              <th style="text-align:right">Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="servicesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- URGENCIA -->
+    <div class="card">
+      <div class="section-label">Tiempo</div>
+      <div class="card-title"><div class="card-icon">⚡</div> Urgencia de Entrega</div>
+      <div class="urgency-options" id="urgencyOptions"></div>
+      <div class="note-box">
+        ⏱ El tiempo de entrega se calcula en <strong>días hábiles</strong> (lunes a viernes) desde hoy. Los recargos por urgencia se aplican automáticamente.
+      </div>
+    </div>
+
+    <!-- DESCUENTOS Y AJUSTES -->
+    <div class="card">
+      <div class="section-label">Ajustes</div>
+      <div class="card-title"><div class="card-icon">🔧</div> Descuentos y Configuración</div>
+      <div class="discount-row">
+        <div class="form-group">
+          <label>Descuento (%)</label>
+          <input type="number" id="discountPct" value="0" min="0" max="100" oninput="update()">
+        </div>
+        <div class="form-group">
+          <label>Descuento fijo (COP)</label>
+          <input type="number" id="discountFixed" value="0" min="0" oninput="update()">
+        </div>
+      </div>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">
+        <label class="tax-toggle">
+          <div class="toggle-switch" id="toggleIva" onclick="toggleIva()"></div>
+          <span style="font-size:0.9rem;font-weight:500">Incluir IVA (19%)</span>
+        </label>
+        <label class="tax-toggle">
+          <div class="toggle-switch" id="toggleRete" onclick="toggleRete()"></div>
+          <span style="font-size:0.9rem;font-weight:500">Aplicar Retención en la fuente (3.5%)</span>
+        </label>
+      </div>
+      <div class="form-group" style="margin-top:16px">
+        <label>Condiciones de pago</label>
+        <select id="payTerms" onchange="update()">
+          <option value="50% anticipo, 50% entrega">50% anticipo, 50% a la entrega</option>
+          <option value="100% anticipo">100% anticipo</option>
+          <option value="100% a la entrega">100% a la entrega</option>
+          <option value="30 días">Crédito a 30 días</option>
+          <option value="Personalizado">Personalizado</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-top:12px">
+        <label>Notas adicionales</label>
+        <textarea id="extraNotes" placeholder="Ej: Incluye 2 revisiones. Archivos entregados en PDF editable y JPG alta resolución. No incluye impresos." oninput="update()"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="quote-summary" id="quoteSummary">
+      <div class="qs-header">Resumen de cotización</div>
+      <div id="qsSummaryLines">
+        <div class="empty-state">
+          <span class="es-icon">🎨</span>
+          Selecciona servicios del catálogo para ver el resumen
+        </div>
+      </div>
+      <div id="qsTotals" style="display:none">
+        <div class="qs-divider"></div>
+        <div class="qs-line"><span class="qs-desc">Subtotal</span><span class="qs-val" id="qs_sub"></span></div>
+        <div class="qs-line" id="qs_urgLine" style="display:none"><span class="qs-desc" id="qs_urgLabel"></span><span class="qs-val" id="qs_urg"></span></div>
+        <div class="qs-line" id="qs_discLine" style="display:none"><span class="qs-desc">Descuento</span><span class="qs-val" style="color:#6dd5c0" id="qs_disc"></span></div>
+        <div class="qs-line" id="qs_ivaLine" style="display:none"><span class="qs-desc">IVA (19%)</span><span class="qs-val" id="qs_iva"></span></div>
+        <div class="qs-line" id="qs_reteLine" style="display:none"><span class="qs-desc">Retención (3.5%)</span><span class="qs-val" style="color:#f9c846" id="qs_rete"></span></div>
+        <div class="qs-divider"></div>
+        <div class="qs-total">
+          <span class="qs-total-label">Total COP</span>
+          <span class="qs-total-val" id="qs_total">$0</span>
+        </div>
+        <div class="qs-delivery" id="qs_delivery">
+          <div class="qs-delivery-label">Entrega estimada</div>
+          <div class="qs-delivery-date" id="qs_deliveryDate">—</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:2px" id="qs_deliveryDays"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px">
+      <div class="form-group" style="margin-bottom:12px">
+        <label>Número de cotización</label>
+        <input type="text" id="quoteNumber" placeholder="COT-2025-001" oninput="update()">
+      </div>
+      <button class="btn btn-gold btn-full" onclick="generatePDF()" style="margin-bottom:10px">
+        ⬇ Descargar cotización PDF
+      </button>
+      <button class="btn btn-outline btn-full btn-sm" onclick="resetAll()">
+        🗑 Limpiar todo
+      </button>
+    </div>
+
+    <!-- Instructions -->
+    <div style="padding:0 4px">
+      <div style="font-size:0.75rem;color:var(--muted);line-height:1.7">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--ink)">Cómo usar:</div>
+        1. Completa tus datos y los del cliente<br>
+        2. Selecciona servicios del catálogo (clic para agregar/quitar)<br>
+        3. Ajusta cantidades y precios en la tabla<br>
+        4. Configura urgencia, descuentos e impuestos<br>
+        5. Descarga el PDF listo para enviar ✨
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PDF TEMPLATE -->
+<div id="pdfTemplate">
+  <div class="pdf-header">
+    <div class="pdf-brand">
+      <div class="pdf-brand-name" id="pdf_designer">Diseñadora Gráfica</div>
+      <div class="pdf-brand-sub" id="pdf_specialty">Diseño & Branding</div>
+      <div style="color:#7a7065;font-size:0.78rem;margin-top:8px" id="pdf_contact"></div>
+    </div>
+    <div style="text-align:right">
+      <div class="pdf-badge">Cotización</div>
+      <div style="color:#7a7065;font-size:0.75rem;margin-top:10px">N° <span id="pdf_quoteNum" style="color:#c9974a;font-weight:700"></span></div>
+      <div style="color:#7a7065;font-size:0.75rem;margin-top:4px">Fecha: <span id="pdf_date" style="color:white"></span></div>
+    </div>
+  </div>
+  <div class="pdf-gold-bar"></div>
+  <div class="pdf-body">
+    <div class="pdf-meta">
+      <div class="pdf-meta-block">
+        <div class="pdf-meta-title">Para</div>
+        <div class="pdf-meta-row"><span id="pdf_clientName" style="font-weight:700;font-size:1rem"></span></div>
+        <div class="pdf-meta-row" id="pdf_nitRow" style="margin-top:4px"><span style="color:#7a7065">NIT/CC:</span><span class="pdf-meta-val" id="pdf_nit"></span></div>
+        <div class="pdf-meta-row"><span style="color:#7a7065">Email:</span><span class="pdf-meta-val" id="pdf_clientEmail"></span></div>
+        <div class="pdf-meta-row"><span style="color:#7a7065">Ciudad:</span><span class="pdf-meta-val" id="pdf_city"></span></div>
+      </div>
+      <div class="pdf-meta-block">
+        <div class="pdf-meta-title">Información del servicio</div>
+        <div class="pdf-meta-row"><span style="color:#7a7065">Condición de pago:</span></div>
+        <div style="font-weight:700;margin-bottom:6px;font-size:0.9rem" id="pdf_payTerms"></div>
+        <div class="pdf-meta-row"><span style="color:#7a7065">Vigencia:</span><span class="pdf-meta-val">15 días calendario</span></div>
+        <div class="pdf-meta-row"><span style="color:#7a7065">Moneda:</span><span class="pdf-meta-val">COP — Pesos colombianos</span></div>
+      </div>
+    </div>
+
+    <div class="pdf-delivery-highlight">
+      <div class="pdl-item"><div class="pdl-label">Fecha de inicio</div><div class="pdl-val" id="pdf_startDate"></div></div>
+      <div class="pdl-item"><div class="pdl-label">Urgencia</div><div class="pdl-val" id="pdf_urgency"></div></div>
+      <div class="pdl-item"><div class="pdl-label">Días hábiles</div><div class="pdl-val" id="pdf_workDays"></div></div>
+      <div class="pdl-item"><div class="pdl-label">Entrega estimada</div><div class="pdl-val" id="pdf_deliveryDate"></div></div>
+    </div>
+
+    <div class="pdf-section-title">Descripción de servicios</div>
+    <table class="pdf-table">
+      <thead>
+        <tr>
+          <th>Servicio</th>
+          <th style="text-align:center">Cant.</th>
+          <th style="text-align:right">Precio unit.</th>
+          <th style="text-align:right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="pdf_tbody"></tbody>
+    </table>
+
+    <div class="pdf-totals">
+      <div class="pdf-totals-box">
+        <div class="pdf-tot-row"><span>Subtotal</span><span id="pdf_tSub"></span></div>
+        <div class="pdf-tot-row" id="pdf_tUrgRow"><span id="pdf_tUrgLabel"></span><span id="pdf_tUrg"></span></div>
+        <div class="pdf-tot-row" id="pdf_tDiscRow"><span>Descuento</span><span style="color:#27ae60" id="pdf_tDisc"></span></div>
+        <div class="pdf-tot-row" id="pdf_tIvaRow"><span>IVA (19%)</span><span id="pdf_tIva"></span></div>
+        <div class="pdf-tot-row" id="pdf_tReteRow"><span>Retención (3.5%)</span><span id="pdf_tRete"></span></div>
+        <div class="pdf-tot-row final"><span>TOTAL A PAGAR</span><span id="pdf_tTotal"></span></div>
+      </div>
+    </div>
+
+    <div class="pdf-validity">Cotización válida por <strong>15 días calendario</strong> a partir de la fecha de emisión.</div>
+
+    <div id="pdf_notesBlock" style="display:none">
+      <div class="pdf-section-title">Observaciones</div>
+      <div class="pdf-notes-box" id="pdf_notes"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:24px;padding:16px;border:1px solid #e0d8cc;border-radius:10px;background:#faf8f4">
+      <div style="font-size:0.75rem;color:#7a7065;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em">¿Aceptas esta cotización?</div>
+      <div style="font-size:0.85rem;color:#0f0d0a;font-weight:600">Responde este correo o contáctame con tu confirmación para iniciar el proyecto.</div>
+    </div>
+  </div>
+  <div class="pdf-footer">
+    <span id="pdf_footerName"></span> · Diseño Gráfico · <span id="pdf_footerEmail"></span> · Todos los precios en pesos colombianos (COP)
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CATALOG DATA
+// ============================================================
+const CATALOG = [
+  { id: 'logo',        emoji: '✦', name: 'Diseño de Logo',         price: 350000, days: 5,  desc: 'Logotipo vectorial + variantes' },
+  { id: 'branding',    emoji: '🎨', name: 'Manual de Marca',        price: 850000, days: 10, desc: 'Identidad visual completa' },
+  { id: 'tarjeta',     emoji: '📇', name: 'Tarjeta de Presentación', price: 80000,  days: 2,  desc: 'Diseño doble cara' },
+  { id: 'flyer',       emoji: '📄', name: 'Flyer / Afiche',          price: 120000, days: 2,  desc: 'Diseño para digital o impreso' },
+  { id: 'banner',      emoji: '🖼',  name: 'Banner Web',             price: 90000,  days: 1,  desc: 'Hasta 3 formatos' },
+  { id: 'social_pack', emoji: '📱', name: 'Pack Redes Sociales',     price: 280000, days: 4,  desc: '12 plantillas editables' },
+  { id: 'post',        emoji: '🟦', name: 'Post individual RRSS',    price: 45000,  days: 1,  desc: 'Diseño de una publicación' },
+  { id: 'stories',     emoji: '📲', name: 'Stories pack (5)',        price: 150000, days: 2,  desc: '5 historias animadas o estáticas' },
+  { id: 'catalogo',    emoji: '📚', name: 'Catálogo de Producto',    price: 600000, days: 8,  desc: 'Hasta 20 páginas' },
+  { id: 'packaging',   emoji: '📦', name: 'Packaging / Etiqueta',    price: 400000, days: 6,  desc: 'Diseño de empaque o etiqueta' },
+  { id: 'infografia',  emoji: '📊', name: 'Infografía',              price: 200000, days: 3,  desc: 'Visualización de datos' },
+  { id: 'email',       emoji: '✉️', name: 'Email Marketing',         price: 180000, days: 2,  desc: 'Newsletter / plantilla HTML' },
+  { id: 'presentacion',emoji: '🖥', name: 'Presentación PPT',        price: 350000, days: 4,  desc: 'Hasta 20 slides diseñados' },
+  { id: 'mockup',      emoji: '🖨', name: 'Mockups fotorealistas',   price: 120000, days: 2,  desc: '5 mockups renderizados' },
+  { id: 'retoque',     emoji: '🖌', name: 'Retoque Fotográfico',     price: 80000,  days: 1,  desc: 'Por fotografía' },
+  { id: 'menu',        emoji: '🍽',  name: 'Menú / Carta',           price: 220000, days: 3,  desc: 'Para restaurante o cafetería' },
+];
+
+const URGENCY = [
+  { id: 'normal',  label: 'Normal',     sub: 'Tiempo estándar', mul: 1.0,  mulLabel: 'Sin recargo',  extraDaysPct: 0 },
+  { id: 'fast',    label: 'Rápido',     sub: '-30% del tiempo',  mul: 1.25, mulLabel: '+25% recargo', extraDaysPct: -0.3 },
+  { id: 'express', label: 'Express',    sub: '-50% del tiempo',  mul: 1.6,  mulLabel: '+60% recargo', extraDaysPct: -0.5 },
+];
+
+// STATE
+let selectedServices = []; // {id, name, price, days, qty, custom}
+let urgency = URGENCY[0];
+let applyIva = false;
+let applyRete = false;
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  renderCatalog();
+  renderUrgency();
+  setDefaultDate();
+  update();
+});
+
+function setDefaultDate() {
+  const today = new Date().toISOString().split('T')[0];
+  // Pre-fill quote number
+  const y = new Date().getFullYear();
+  const m = String(new Date().getMonth()+1).padStart(2,'0');
+  document.getElementById('quoteNumber').value = `COT-${y}${m}-001`;
+}
+
+// ============================================================
+// CATALOG
+// ============================================================
+function renderCatalog() {
+  const grid = document.getElementById('catalogGrid');
+  grid.innerHTML = CATALOG.map(s => `
+    <button class="catalog-item" id="cat_${s.id}" onclick="toggleService('${s.id}')">
+      <span class="cat-emoji">${s.emoji}</span>
+      <span class="cat-name">${s.name}</span>
+      <span class="cat-price">${fmt(s.price)}</span>
+      <span class="cat-time">~${s.days} día${s.days!==1?'s':''}</span>
+    </button>`).join('');
+}
+
+function toggleService(id) {
+  const svc = CATALOG.find(s => s.id === id);
+  const idx = selectedServices.findIndex(s => s.id === id);
+  if (idx >= 0) {
+    selectedServices.splice(idx, 1);
+    document.getElementById('cat_'+id).classList.remove('selected');
+  } else {
+    selectedServices.push({ ...svc, qty: 1, customPrice: svc.price });
+    document.getElementById('cat_'+id).classList.add('selected');
+  }
+  renderSelectedTable();
+  update();
+}
+
+function toggleCustomForm() {
+  const f = document.getElementById('customForm');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addCustomService() {
+  const name = document.getElementById('customSvcName').value.trim();
+  const price = parseFloat(document.getElementById('customSvcPrice').value) || 0;
+  const days = parseInt(document.getElementById('customSvcDays').value) || 1;
+  if (!name) { showToast('Escribe el nombre del servicio'); return; }
+  const id = 'custom_' + Date.now();
+  selectedServices.push({ id, name, emoji: '✦', price, days, qty: 1, customPrice: price, custom: true });
+  renderSelectedTable();
+  update();
+  document.getElementById('customSvcName').value = '';
+  document.getElementById('customSvcPrice').value = '';
+  document.getElementById('customSvcDays').value = '';
+  showToast('Servicio personalizado agregado');
+}
+
+function renderSelectedTable() {
+  const card = document.getElementById('selectedCard');
+  const tbody = document.getElementById('servicesBody');
+  if (!selectedServices.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  tbody.innerHTML = selectedServices.map(s => `
+    <tr>
+      <td><strong>${s.emoji} ${s.name}</strong><br><span style="font-size:0.75rem;color:var(--muted)">~${s.days} día${s.days!==1?'s':''} por unidad</span></td>
+      <td style="text-align:center">
+        <input class="qty-input" type="number" value="${s.qty}" min="1" max="99"
+          onchange="setQty('${s.id}', this.value)">
+      </td>
+      <td style="text-align:right">
+        <input class="custom-price-input" type="number" value="${s.customPrice}" min="0"
+          onchange="setPrice('${s.id}', this.value)">
+      </td>
+      <td style="text-align:right;font-weight:700">${fmt(s.customPrice * s.qty)}</td>
+      <td><button class="remove-btn" onclick="removeService('${s.id}')">✕</button></td>
+    </tr>`).join('');
+}
+
+function setQty(id, val) {
+  const s = selectedServices.find(s => s.id === id);
+  if (s) s.qty = Math.max(1, parseInt(val)||1);
+  renderSelectedTable();
+  update();
+}
+
+function setPrice(id, val) {
+  const s = selectedServices.find(s => s.id === id);
+  if (s) s.customPrice = parseFloat(val) || 0;
+  update();
+}
+
+function removeService(id) {
+  selectedServices = selectedServices.filter(s => s.id !== id);
+  const cat = document.getElementById('cat_'+id);
+  if (cat) cat.classList.remove('selected');
+  renderSelectedTable();
+  update();
+}
+
+// ============================================================
+// URGENCY
+// ============================================================
+function renderUrgency() {
+  document.getElementById('urgencyOptions').innerHTML = URGENCY.map(u => `
+    <button class="urgency-btn ${u.id===urgency.id?'selected':''}" onclick="selectUrgency('${u.id}')">
+      <span class="urgency-label">${u.label}</span>
+      <span class="urgency-sub">${u.sub}</span>
+      <span class="urgency-mul">${u.mulLabel}</span>
+    </button>`).join('');
+}
+
+function selectUrgency(id) {
+  urgency = URGENCY.find(u => u.id === id);
+  renderUrgency();
+  update();
+}
+
+// ============================================================
+// TOGGLES
+// ============================================================
+function toggleIva() {
+  applyIva = !applyIva;
+  document.getElementById('toggleIva').classList.toggle('on', applyIva);
+  update();
+}
+function toggleRete() {
+  applyRete = !applyRete;
+  document.getElementById('toggleRete').classList.toggle('on', applyRete);
+  update();
+}
+
+// ============================================================
+// CALCULATION & UPDATE
+// ============================================================
+function calcTotals() {
+  const subtotal = selectedServices.reduce((a, s) => a + s.customPrice * s.qty, 0);
+  const urgencyExtra = subtotal * (urgency.mul - 1);
+  const subtotalWithUrgency = subtotal + urgencyExtra;
+  const discPct = parseFloat(document.getElementById('discountPct').value)||0;
+  const discFixed = parseFloat(document.getElementById('discountFixed').value)||0;
+  const discAmount = Math.min(subtotalWithUrgency, subtotalWithUrgency * (discPct/100) + discFixed);
+  const afterDisc = subtotalWithUrgency - discAmount;
+  const iva = applyIva ? afterDisc * 0.19 : 0;
+  const rete = applyRete ? afterDisc * 0.035 : 0;
+  const total = afterDisc + iva - rete;
+  return { subtotal, urgencyExtra, discAmount, afterDisc, iva, rete, total };
+}
+
+function calcDelivery() {
+  if (!selectedServices.length) return { days: 0, date: '—' };
+  const maxDays = Math.max(...selectedServices.map(s => s.days * s.qty));
+  const adjDays = Math.max(1, Math.round(maxDays * (1 + urgency.extraDaysPct)));
+  const date = addBusinessDays(new Date(), adjDays);
+  return { days: adjDays, date: formatDate(date) };
+}
+
+function addBusinessDays(start, n) {
+  const d = new Date(start);
+  let added = 0;
+  while (added < n) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0 && d.getDay() !== 6) added++;
+  }
+  return d;
+}
+
+function formatDate(d) {
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${d.getDate()} de ${months[d.getMonth()]} de ${d.getFullYear()}`;
+}
+
+function update() {
+  const t = calcTotals();
+  const delivery = calcDelivery();
+  const hasServices = selectedServices.length > 0;
+
+  const summaryLines = document.getElementById('qsSummaryLines');
+  const qsTotals = document.getElementById('qsTotals');
+
+  if (!hasServices) {
+    summaryLines.innerHTML = `<div class="empty-state"><span class="es-icon">🎨</span>Selecciona servicios del catálogo para ver el resumen</div>`;
+    qsTotals.style.display = 'none';
+    return;
+  }
+
+  summaryLines.innerHTML = selectedServices.map(s => `
+    <div class="qs-line">
+      <span class="qs-desc">${s.emoji} ${s.name} ×${s.qty}</span>
+      <span class="qs-val">${fmt(s.customPrice * s.qty)}</span>
+    </div>`).join('');
+  qsTotals.style.display = 'block';
+
+  document.getElementById('qs_sub').textContent = fmt(t.subtotal);
+  setShow('qs_urgLine', t.urgencyExtra > 0);
+  if (t.urgencyExtra > 0) {
+    document.getElementById('qs_urgLabel').textContent = `Recargo ${urgency.label}`;
+    document.getElementById('qs_urg').textContent = '+' + fmt(t.urgencyExtra);
+  }
+  setShow('qs_discLine', t.discAmount > 0);
+  document.getElementById('qs_disc').textContent = '−' + fmt(t.discAmount);
+  setShow('qs_ivaLine', applyIva);
+  document.getElementById('qs_iva').textContent = '+' + fmt(t.iva);
+  setShow('qs_reteLine', applyRete);
+  document.getElementById('qs_rete').textContent = '−' + fmt(t.rete);
+  document.getElementById('qs_total').textContent = fmt(t.total);
+  document.getElementById('qs_deliveryDate').textContent = delivery.date;
+  document.getElementById('qs_deliveryDays').textContent = delivery.days ? `${delivery.days} días hábiles` : '';
+}
+
+function setShow(id, show) {
+  document.getElementById(id).style.display = show ? 'flex' : 'none';
+}
+
+// ============================================================
+// PDF
+// ============================================================
+function generatePDF() {
+  if (!selectedServices.length) { showToast('Agrega al menos un servicio'); return; }
+
+  const t = calcTotals();
+  const delivery = calcDelivery();
+  const today = new Date();
+
+  // Fill PDF template
+  const dName = document.getElementById('designerName').value || 'Diseñadora Gráfica';
+  const dSpec = document.getElementById('designerSpecialty').value || 'Diseño & Branding';
+  const dEmail = document.getElementById('designerEmail').value || '';
+  const dPhone = document.getElementById('designerPhone').value || '';
+  document.getElementById('pdf_designer').textContent = dName;
+  document.getElementById('pdf_specialty').textContent = dSpec;
+  document.getElementById('pdf_contact').textContent = [dEmail, dPhone].filter(Boolean).join(' · ');
+  document.getElementById('pdf_footerName').textContent = dName;
+  document.getElementById('pdf_footerEmail').textContent = dEmail;
+
+  const qNum = document.getElementById('quoteNumber').value || 'COT-001';
+  document.getElementById('pdf_quoteNum').textContent = qNum;
+  document.getElementById('pdf_date').textContent = formatDate(today);
+  document.getElementById('pdf_startDate').textContent = formatDate(today);
+
+  document.getElementById('pdf_clientName').textContent = document.getElementById('clientName').value || 'Cliente';
+  const nit = document.getElementById('clientNit').value;
+  document.getElementById('pdf_nitRow').style.display = nit ? 'flex' : 'none';
+  document.getElementById('pdf_nit').textContent = nit;
+  document.getElementById('pdf_clientEmail').textContent = document.getElementById('clientEmail').value || '—';
+  document.getElementById('pdf_city').textContent = document.getElementById('clientCity').value || '—';
+  document.getElementById('pdf_payTerms').textContent = document.getElementById('payTerms').value;
+
+  document.getElementById('pdf_urgency').textContent = urgency.label;
+  document.getElementById('pdf_workDays').textContent = delivery.days || '—';
+  document.getElementById('pdf_deliveryDate').textContent = delivery.date;
+
+  // Table
+  document.getElementById('pdf_tbody').innerHTML = selectedServices.map(s => `
+    <tr>
+      <td>${s.emoji} ${s.name}</td>
+      <td style="text-align:center">${s.qty}</td>
+      <td style="text-align:right">${fmt(s.customPrice)}</td>
+      <td style="text-align:right">${fmt(s.customPrice * s.qty)}</td>
+    </tr>`).join('');
+
+  // Totals
+  document.getElementById('pdf_tSub').textContent = fmt(t.subtotal);
+  const tUrgRow = document.getElementById('pdf_tUrgRow');
+  tUrgRow.style.display = t.urgencyExtra > 0 ? 'flex' : 'none';
+  document.getElementById('pdf_tUrgLabel').textContent = `Recargo urgencia (${urgency.label})`;
+  document.getElementById('pdf_tUrg').textContent = '+' + fmt(t.urgencyExtra);
+  const tDiscRow = document.getElementById('pdf_tDiscRow');
+  tDiscRow.style.display = t.discAmount > 0 ? 'flex' : 'none';
+  document.getElementById('pdf_tDisc').textContent = '−' + fmt(t.discAmount);
+  const tIvaRow = document.getElementById('pdf_tIvaRow');
+  tIvaRow.style.display = applyIva ? 'flex' : 'none';
+  document.getElementById('pdf_tIva').textContent = '+' + fmt(t.iva);
+  const tReteRow = document.getElementById('pdf_tReteRow');
+  tReteRow.style.display = applyRete ? 'flex' : 'none';
+  document.getElementById('pdf_tRete').textContent = '−' + fmt(t.rete);
+  document.getElementById('pdf_tTotal').textContent = fmt(t.total);
+
+  const notes = document.getElementById('extraNotes').value.trim();
+  const notesBlock = document.getElementById('pdf_notesBlock');
+  notesBlock.style.display = notes ? 'block' : 'none';
+  document.getElementById('pdf_notes').textContent = notes;
+
+  // Generate
+  const el = document.getElementById('pdfTemplate');
+  el.style.display = 'block';
+  const clientSlug = (document.getElementById('clientName').value || 'cliente').replace(/\s+/g,'_');
+  const filename = `Cotizacion_${clientSlug}_${qNum}.pdf`;
+  const opt = {
+    margin: 0,
+    filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
+  };
+  html2pdf().set(opt).from(el).save().then(() => {
+    el.style.display = 'none';
+    showToast('✅ PDF descargado exitosamente');
+  }).catch(() => {
+    el.style.display = 'none';
+    showToast('Error generando PDF. Intenta de nuevo.');
+  });
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('es-CO');
+}
+
+function resetAll() {
+  if (!confirm('¿Limpiar todos los servicios seleccionados?')) return;
+  selectedServices = [];
+  document.querySelectorAll('.catalog-item').forEach(el => el.classList.remove('selected'));
+  renderSelectedTable();
+  update();
+  showToast('Lista limpiada');
+}
+
+let toastTimeout;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
+ 
